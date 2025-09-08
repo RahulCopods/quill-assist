@@ -14,6 +14,7 @@ interface DocumentSidebarProps {
   comments: Comment[];
   suggestions: Suggestion[];
   approvals: Approval[];
+  onAddComment: (text: string, position: number) => void;
   onResolveComment: (id: string) => void;
   onAcceptSuggestion: (id: string) => void;
   onRejectSuggestion: (id: string) => void;
@@ -32,6 +33,7 @@ export const DocumentSidebar = ({
   comments,
   suggestions,
   approvals,
+  onAddComment,
   onResolveComment,
   onAcceptSuggestion,
   onRejectSuggestion,
@@ -43,7 +45,8 @@ export const DocumentSidebar = ({
   const handleAddComment = () => {
     if (newComment.trim()) {
       // This would typically get the current cursor position
-      const position = 0;
+      const position = Math.floor(Math.random() * 10);
+      onAddComment(newComment, position);
       setNewComment("");
       setShowCommentInput(false);
     }

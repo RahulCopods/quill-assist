@@ -8,8 +8,8 @@ import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
-import { $getRoot, $getSelection, EditorState } from "lexical";
-import { $isHeadingNode, HeadingNode } from "@lexical/rich-text";
+import { $getRoot, $getSelection, EditorState, $createParagraphNode, $createTextNode } from "lexical";
+import { $isHeadingNode, HeadingNode, $createHeadingNode } from "@lexical/rich-text";
 import { ListNode, ListItemNode } from "@lexical/list";
 import type { ToolbarTab, DocumentOutline } from "../DocumentEditor";
 
@@ -50,6 +50,7 @@ interface DocumentContentProps {
   onOutlineChange: (outline: DocumentOutline[]) => void;
   onAddComment: (text: string, position: number) => void;
   onAddSuggestion: (type: "insert" | "delete" | "replace", text: string, position: number, originalText?: string) => void;
+  initialContent?: string;
 }
 
 function OutlinePlugin({ onOutlineChange }: { onOutlineChange: (outline: DocumentOutline[]) => void }) {
@@ -85,6 +86,61 @@ function OutlinePlugin({ onOutlineChange }: { onOutlineChange: (outline: Documen
   return null;
 }
 
+function InitialContentPlugin({ content }: { content: string }) {
+  const [editor] = useLexicalComposerContext();
+
+  useEffect(() => {
+    if (content) {
+      editor.update(() => {
+        const root = $getRoot();
+        root.clear();
+        
+        // Parse markdown-like content
+        const lines = content.split('\n');
+        lines.forEach(line => {
+          if (line.startsWith('# ')) {
+            const headingNode = $createHeadingNode('h1');
+            headingNode.append($createTextNode(line.substring(2)));
+            root.append(headingNode);
+          } else if (line.startsWith('## ')) {
+            const headingNode = $createHeadingNode('h2');
+            headingNode.append($createTextNode(line.substring(3)));
+            root.append(headingNode);
+          } else if (line.startsWith('### ')) {
+            const headingNode = $createHeadingNode('h3');
+            headingNode.append($createTextNode(line.substring(4)));
+            root.append(headingNode);
+          } else if (line.trim()) {
+            const paragraphNode = $createParagraphNode();
+            
+            // Handle bold and italic formatting
+            const parts = line.split(/(\*\*.*?\*\*|\*.*?\*)/);
+            parts.forEach(part => {
+              if (part.startsWith('**') && part.endsWith('**')) {
+                const textNode = $createTextNode(part.slice(2, -2));
+                textNode.setFormat('bold');
+                paragraphNode.append(textNode);
+              } else if (part.startsWith('*') && part.endsWith('*')) {
+                const textNode = $createTextNode(part.slice(1, -1));
+                textNode.setFormat('italic');
+                paragraphNode.append(textNode);
+              } else if (part.trim()) {
+                paragraphNode.append($createTextNode(part));
+              }
+            });
+            
+            root.append(paragraphNode);
+          } else {
+            root.append($createParagraphNode());
+          }
+        });
+      });
+    }
+  }, [editor, content]);
+
+  return null;
+}
+
 const initialConfig = {
   namespace: "DocumentEditor",
   theme,
@@ -96,7 +152,8 @@ export const DocumentContent = ({
   activeToolbarTab, 
   onOutlineChange, 
   onAddComment, 
-  onAddSuggestion 
+  onAddSuggestion,
+  initialContent
 }: DocumentContentProps) => {
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -111,7 +168,7 @@ export const DocumentContent = ({
           <div className="relative">
             <RichTextPlugin
               contentEditable={
-                <div ref={contentRef} className="p-16">
+                <div ref={contentRef} className="p-16 lexical-editor">
                   <ContentEditable 
                     className="min-h-[600px] outline-none text-foreground leading-relaxed"
                   />
@@ -128,6 +185,7 @@ export const DocumentContent = ({
             <HistoryPlugin />
             <ListPlugin />
             <OutlinePlugin onOutlineChange={onOutlineChange} />
+            {initialContent && <InitialContentPlugin content={initialContent} />}
           </div>
         </LexicalComposer>
       </div>

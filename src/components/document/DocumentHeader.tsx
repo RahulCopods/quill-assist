@@ -1,7 +1,8 @@
-import { Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, List, ListOrdered, Image, Table, Link, FileText, Eye, Users } from "lucide-react";
+import { Image, Table, Link, FileText, Eye, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
+import { DocumentToolbar } from "./DocumentToolbar";
 import type { ToolbarTab } from "../DocumentEditor";
 
 interface DocumentHeaderProps {
@@ -18,34 +19,7 @@ const toolbarTabs = [
 
 export const DocumentHeader = ({ activeTab, onTabChange }: DocumentHeaderProps) => {
   const renderHomeTools = () => (
-    <div className="flex items-center gap-1">
-      <Button variant="ghost" size="sm">
-        <Bold className="h-4 w-4" />
-      </Button>
-      <Button variant="ghost" size="sm">
-        <Italic className="h-4 w-4" />
-      </Button>
-      <Button variant="ghost" size="sm">
-        <Underline className="h-4 w-4" />
-      </Button>
-      <Separator orientation="vertical" className="h-6 mx-2" />
-      <Button variant="ghost" size="sm">
-        <AlignLeft className="h-4 w-4" />
-      </Button>
-      <Button variant="ghost" size="sm">
-        <AlignCenter className="h-4 w-4" />
-      </Button>
-      <Button variant="ghost" size="sm">
-        <AlignRight className="h-4 w-4" />
-      </Button>
-      <Separator orientation="vertical" className="h-6 mx-2" />
-      <Button variant="ghost" size="sm">
-        <List className="h-4 w-4" />
-      </Button>
-      <Button variant="ghost" size="sm">
-        <ListOrdered className="h-4 w-4" />
-      </Button>
-    </div>
+    <DocumentToolbar />
   );
 
   const renderInsertTools = () => (
@@ -66,25 +40,7 @@ export const DocumentHeader = ({ activeTab, onTabChange }: DocumentHeaderProps) 
   );
 
   const renderFormatTools = () => (
-    <div className="flex items-center gap-1">
-      <select className="px-2 py-1 border rounded text-sm">
-        <option>Normal</option>
-        <option>Heading 1</option>
-        <option>Heading 2</option>
-        <option>Heading 3</option>
-      </select>
-      <select className="px-2 py-1 border rounded text-sm ml-2">
-        <option>Arial</option>
-        <option>Times New Roman</option>
-        <option>Helvetica</option>
-      </select>
-      <select className="px-2 py-1 border rounded text-sm ml-2">
-        <option>12px</option>
-        <option>14px</option>
-        <option>16px</option>
-        <option>18px</option>
-      </select>
-    </div>
+    <DocumentToolbar />
   );
 
   const renderReviewTools = () => (
