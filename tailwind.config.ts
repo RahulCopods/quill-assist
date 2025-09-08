@@ -57,6 +57,30 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        editor: {
+          DEFAULT: "hsl(var(--editor-background))",
+          border: "hsl(var(--editor-border))",
+        },
+        toolbar: {
+          DEFAULT: "hsl(var(--toolbar-background))",
+          border: "hsl(var(--toolbar-border))",
+        },
+        suggestion: {
+          DEFAULT: "hsl(var(--suggestion-background))",
+          border: "hsl(var(--suggestion-border))",
+        },
+        comment: {
+          DEFAULT: "hsl(var(--comment-background))",
+          border: "hsl(var(--comment-border))",
+        },
+        approval: {
+          DEFAULT: "hsl(var(--approval-background))",
+          border: "hsl(var(--approval-border))",
+        },
+        nav: {
+          active: "hsl(var(--nav-active))",
+          hover: "hsl(var(--nav-hover))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
